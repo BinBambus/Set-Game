@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,7 +23,15 @@ import java.util.ArrayList;
 
 public class SetGameWindow extends Application {
     Scene scene1,scene2;
-    private int players = 1; //Anzahl der Spieler
+    private int players = 1;
+    PlayerWindows[] playerWindows;//Anzahl der Spieler
+    private int kartenAngeklickt = 0;
+    private int karte1;
+    private int karte2;
+    private int karte3;
+    private int karte4;
+    public static boolean setKlicked = false;
+    public static int playerwhopressedSet;
 
     public static void main(String[] args) {
         launch(args);
@@ -43,7 +52,6 @@ public class SetGameWindow extends Application {
         }
         //Karten mischen
         Collections.shuffle(cards);
-
 
 
 
@@ -85,13 +93,17 @@ public class SetGameWindow extends Application {
             // Konvertiere den Wert in eine Zahl (int)
             players = Integer.parseInt(wert);
         });
+
         //Spieler Fenster initzialisieren und auf Spielbrett wechseln
         start.setOnAction(e->{
+            //Spieler im Array sammeln
+            playerWindows = new PlayerWindows[players];
             setGameStage.setScene(scene2);
-            for (int i = 0; i < players; i++) {
-                PlayerWindows playerWindow = new PlayerWindows();
-                playerWindow.setPlayer(i+1);
-                playerWindow.start(new Stage());
+            //Spieler Fenster intialisieren
+            for (int i= 0; i < players; i++){
+                playerWindows[i] = new PlayerWindows();
+                playerWindows[i].setPlayer(i+1);
+                playerWindows[i].start(new Stage());
             }
         });
 
@@ -126,8 +138,42 @@ public class SetGameWindow extends Application {
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
-                grid.add(new ImageView(cards.get(counter).getName()+".png"), col,row);
+                int index = row * numCols + col; // Berechnung des Index basierend auf row und col
+
+                ImageView imageView = new ImageView(cards.get(counter).getName()+".png");
+                grid.add(imageView, col,row);
                 counter++;
+
+                final int karteIndex = index; // Variable, um den Index innerhalb des EventListeners zu halten
+                imageView.setOnMouseClicked(event -> {
+                    if (kartenAngeklickt == 0) {
+                        karte1 = karteIndex;
+                    } if (kartenAngeklickt == 1) {
+                        karte2 = karteIndex;
+                    }if (kartenAngeklickt == 2) {
+                        karte3 = karteIndex;
+                    }if (kartenAngeklickt == 3) {
+                        karte4 = karteIndex;
+                        //überprüfenSet;
+                        if (überprüfenSet(cards,karte1,karte2,karte3,karte4)){
+                            //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
+                            System.out.println("True");
+                            playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
+                            //Spieler score um 1 erhöhen, bei dem der SET gedrückt hat
+                            playerWindows[playerwhopressedSet].setPlayerScorePlus1();
+                        } else {
+                            System.out.println("False");
+                            //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
+                            playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
+                            //Spieler score um 1 verringern, bei dem der SET gedrückt hat
+                            playerWindows[playerwhopressedSet].setPlayerScoreMinus1();
+                        }
+                        kartenAngeklickt = 0;
+                    }
+                    kartenAngeklickt++;
+                    System.out.println("Kartenindex: " + karteIndex); // Zur Überprüfung des Index
+
+                });
             }
         }
 
@@ -161,4 +207,36 @@ public class SetGameWindow extends Application {
         //Öffnen Spieler Fenster
         for (int i = 0; i < players; i++) {}
     }
+    public boolean überprüfenSet(ArrayList<Cards> cards, int karte1, int karte2, int karte3, int karte4){
+        boolean isSet;
+        if ((cards.get(karte1).getShape() == cards.get(karte2).getShape()) && (cards.get(karte2).getShape() == cards.get(karte3).getShape()) /**/ && (cards.get(karte3).getShape() == cards.get(karte4).getShape())) {
+            isSet = true;
+        } else if ((cards.get(karte1).getColour() == cards.get(karte2).getColour()) && (cards.get(karte2).getColour() == cards.get(karte3).getColour()) /**/ && (cards.get(karte3).getColour() == cards.get(karte4).getColour())){
+            isSet = true;
+        } else if ((cards.get(karte1).getCount() == cards.get(karte2).getCount()) && (cards.get(karte2).getCount() == cards.get(karte3).getCount()) /**/ && (cards.get(karte3).getCount() == cards.get(karte4).getCount())){
+            isSet = true;
+        } else if ((cards.get(karte1).getFilling() == cards.get(karte2).getFilling()) && (cards.get(karte2).getFilling() == cards.get(karte3).getFilling()) /**/ && (cards.get(karte3).getFilling() == cards.get(karte4).getFilling())){
+            isSet = true;
+        } else if ((cards.get(karte1).getShape() != cards.get(karte2).getShape()) && (cards.get(karte1).getShape() != cards.get(karte3).getShape()) /**/ && (cards.get(karte1).getShape() == cards.get(karte4).getShape())
+                && (cards.get(karte2).getShape() != cards.get(karte3).getShape()) && (cards.get(karte2).getShape() != cards.get(karte4).getShape()) /**/
+                && (cards.get(karte3).getShape() != cards.get(karte4).getShape())) {
+            isSet = true;
+        } else if ((cards.get(karte1).getColour() != cards.get(karte2).getColour()) && (cards.get(karte1).getColour() != cards.get(karte3).getColour()) /**/ && (cards.get(karte1).getColour() == cards.get(karte4).getColour())
+                && (cards.get(karte2).getColour() != cards.get(karte3).getColour()) && (cards.get(karte2).getColour() != cards.get(karte4).getColour()) /**/
+                && (cards.get(karte3).getColour() != cards.get(karte4).getColour())) {
+            isSet = true;
+        } else if ((cards.get(karte1).getCount() != cards.get(karte2).getCount()) && (cards.get(karte1).getCount() != cards.get(karte3).getCount()) /**/ && (cards.get(karte1).getCount() == cards.get(karte4).getCount())
+                && (cards.get(karte2).getCount() != cards.get(karte3).getCount()) && (cards.get(karte2).getCount() != cards.get(karte4).getCount()) /**/
+                && (cards.get(karte3).getCount() != cards.get(karte4).getCount())) {
+            isSet = true;
+        } else if ((cards.get(karte1).getFilling() != cards.get(karte2).getFilling()) && (cards.get(karte1).getFilling() != cards.get(karte3).getFilling()) /**/ && (cards.get(karte1).getFilling() == cards.get(karte4).getFilling())
+                && (cards.get(karte2).getFilling() != cards.get(karte3).getFilling()) && (cards.get(karte2).getFilling() != cards.get(karte4).getFilling()) /**/
+                && (cards.get(karte3).getFilling() != cards.get(karte4).getFilling())) {
+            isSet = true;
+        } else {
+            isSet = false;
+        }
+        return isSet;
+    }
+
 }

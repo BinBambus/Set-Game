@@ -16,10 +16,13 @@ import java.util.Timer;
 
 public class PlayerWindows extends Application {
 
-    private int player = 1;
+    private int player = 0;
     private int playerTimer = 15;
     private int playerScore = 0;
     Timeline timeline;
+    private Label scoreLabel;
+    private Label timeLeftLabel;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -38,23 +41,28 @@ public class PlayerWindows extends Application {
         //Buttons and Labels
 
         // Nur fürs Beispiel
-        Label scoreLabel = new Label("Score: " +playerScore);
+        scoreLabel = new Label("Score: " +playerScore);
 
 
         // Nur fürs Beispiel
-        Label timeLeftLabel = new Label("Time Left: "+playerTimer);
+        timeLeftLabel = new Label("Time Left: "+playerTimer);
 
 
 
 
         Button playerSetButton = new Button("SET");
         playerSetButton.setOnAction(e -> {
-            start1orEnd0_PlayerTimer(true, scoreLabel, timeLeftLabel);
+            //Man darf nur SET drücken wenn man der erste ist
+            if (SetGameWindow.setKlicked == false){
+                SetGameWindow.setKlicked = true;
+                SetGameWindow.playerwhopressedSet = (player-1);//Minus 1 wichtig weil bei dem anlegen des fenster player+1 gerechnet wird
+                start1orEnd0_PlayerTimer(true, scoreLabel, timeLeftLabel);
+            }
         });
 
 
         //SetStage
-        playerStage.setTitle("Player "+player);
+        playerStage.setTitle("Player "+(player));
         playerStage.setScene(scene);
         playerStage.show();
 
@@ -64,28 +72,47 @@ public class PlayerWindows extends Application {
     public void setPlayer(int player){
         this.player = player;
     }
+    public void setPlayerScorePlus1(){
+        playerScore++;
+        scoreLabel.setText("Score: " + playerScore);
+    }
+    public void setPlayerScoreMinus1(){
+        playerScore--;
+        scoreLabel.setText("Score: " + playerScore);
+    }
+    public Label getScoreLabel(){
+        return scoreLabel;
+    }
+    public Label getTimeLeftLabel(){
+        return timeLeftLabel;
+    }
 
     //Starting the Timer after SET-Button is pressed
+    //Stopping the Timer when Method is called after a Check of 4 Cards
     public void start1orEnd0_PlayerTimer(boolean endOrStart, Label scoreLabel, Label timeLeftLabel){
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            if(playerTimer > 0){
-                playerTimer--;
-                timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
-            } else{
-                playerTimer = 15;
-                playerScore--;
-                scoreLabel.setText("Score: " + playerScore);//Update Score if time runs out (Score -1)
-                timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
-                timeline.stop();
-            }
-
-        }));
-        if(endOrStart){
+        if (timeline == null) {
+            timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                if(playerTimer > 0){
+                    playerTimer--;
+                    timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
+                } else{
+                    playerTimer = 15;
+                    playerScore--;
+                    scoreLabel.setText("Score: " + playerScore);//Update Score if time runs out (Score -1)
+                    timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
+                    timeline.stop();
+                }
+            }));
             timeline.setCycleCount(Timeline.INDEFINITE); // Run indefinitely
+        }
+
+        if(endOrStart){
             timeline.play(); // Start the timeline
         }else{
             timeline.stop();
             playerTimer = 15;
+            timeLeftLabel.setText("Time Left: " + playerTimer);
+            scoreLabel.setText("Score: " + playerScore);
         }
 
     }
