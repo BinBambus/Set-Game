@@ -12,14 +12,14 @@ import javafx.stage.Stage;
 public class PlayerWindows extends Application {
 
     private int player = 1;
-
+    private int malte = 1;
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage playerStage) {
-
+        malte = malte+1;
         //Setting Root
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
