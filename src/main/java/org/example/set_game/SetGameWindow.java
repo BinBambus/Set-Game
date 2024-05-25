@@ -24,8 +24,11 @@ import java.util.ArrayList;
 public class SetGameWindow extends Application {
     Scene scene1,scene2;
     private int players = 1;
+    int gridUpdateCounter = 0;
     PlayerWindows[] playerWindows;//Anzahl der Spieler
-    private int kartenAngeklickt = 0;
+    GridPane grid;
+    HBox bottomButtons;
+    public static int kartenAngeklickt = 0;
     private int karte1;
     private int karte2;
     private int karte3;
@@ -123,80 +126,41 @@ public class SetGameWindow extends Application {
 
 
         //Game Screen
-        GridPane grid = new GridPane();
+        grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setAlignment(Pos.CENTER);
 
-        //grid.add(new ImageView(cards.get(0).getName()), col,row);
-
-        // Tabelle
-        int numCols = 4;
-        int numRows = 3;
-        int counter = 0;
-
-
-        for (int row = 0; row < numRows; row++) {
-            for (int col = 0; col < numCols; col++) {
-                int index = row * numCols + col; // Berechnung des Index basierend auf row und col
-
-                ImageView imageView = new ImageView(cards.get(counter).getName()+".png");
-                grid.add(imageView, col,row);
-                counter++;
-
-                final int karteIndex = index; // Variable, um den Index innerhalb des EventListeners zu halten
-                imageView.setOnMouseClicked(event -> {
-                    if (kartenAngeklickt == 0) {
-                        karte1 = karteIndex;
-                    } if (kartenAngeklickt == 1) {
-                        karte2 = karteIndex;
-                    }if (kartenAngeklickt == 2) {
-                        karte3 = karteIndex;
-                    }if (kartenAngeklickt == 3) {
-                        karte4 = karteIndex;
-                        //überprüfenSet;
-                        if (überprüfenSet(cards,karte1,karte2,karte3,karte4)){
-                            //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
-                            System.out.println("True");
-                            playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
-                            //Spieler score um 1 erhöhen, bei dem der SET gedrückt hat
-                            playerWindows[playerwhopressedSet].setPlayerScorePlus1();
-                        } else {
-                            System.out.println("False");
-                            //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
-                            playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
-                            //Spieler score um 1 verringern, bei dem der SET gedrückt hat
-                            playerWindows[playerwhopressedSet].setPlayerScoreMinus1();
-                        }
-                        kartenAngeklickt = 0;
-                    }
-                    kartenAngeklickt++;
-                    System.out.println("Kartenindex: " + karteIndex); // Zur Überprüfung des Index
-
-                });
-            }
-        }
+        //GridPane
+        buildGridPane(cards);
 
         Button endGame = new Button("End Game");
         Button noSet = new Button("No Set");
+        Button refresh = new Button("Refresh");
+        refresh.setOnAction(e->{
+            if (buildGridPane(cards)!= null){
+                setGameStage.setScene(buildGridPane(cards));
+            }
 
-        HBox bottomButtons = new HBox();
+        });
+
+        bottomButtons = new HBox();
         bottomButtons.setAlignment(Pos.BOTTOM_CENTER);
         bottomButtons.setSpacing(125);
-        bottomButtons.getChildren().addAll(noSet, endGame);
+        bottomButtons.getChildren().addAll(noSet,refresh, endGame);
 
 
 
 
 
 
+        //Layout für Gridpane und Buttons
+        VBox layout2 = new VBox(50);
+        layout2.setPadding(new Insets(20,20,10,20));
 
-        VBox layout = new VBox(50);
-        layout.setPadding(new Insets(20,20,10,20));
-
-        layout.getChildren().addAll(grid,bottomButtons);
+        layout2.getChildren().addAll(grid,bottomButtons);
         //Scene
-        scene2 = new Scene(layout,800,800);
+        scene2 = new Scene(layout2,800,800);
 
 
         //Setstage
@@ -237,6 +201,92 @@ public class SetGameWindow extends Application {
             isSet = false;
         }
         return isSet;
+    }
+    public Scene buildGridPane(ArrayList<Cards> cards){
+
+        //grid.add(new ImageView(cards.get(0).getName()), col,row);
+
+        // Tabelle
+        int numCols = 4;
+        int numRows = 3;
+        int counter = 0;
+
+        grid.getChildren().clear();
+
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                if (counter >= cards.size()) {
+                    break; // Beende die Schleife, wenn alle Karten hinzugefügt wurden
+                }
+
+                int index = row * numCols + col; // Berechnung des Index basierend auf row und col
+                ImageView imageView = new ImageView(cards.get(counter).getName()+".png");
+                grid.add(imageView, col,row);
+                counter++;
+
+                final int karteIndex = index; // Variable, um den Index innerhalb des EventListeners zu halten
+                imageView.setOnMouseClicked(event -> {
+                    if (setKlicked){ // Anklicken nur möglich wenn Set klicked ausgewählt ist
+                        if (kartenAngeklickt == 0) {
+                            karte1 = karteIndex;
+                        } if (kartenAngeklickt == 1) {
+                            karte2 = karteIndex;
+                        }if (kartenAngeklickt == 2) {
+                            karte3 = karteIndex;
+                        }if (kartenAngeklickt == 3) {
+                            karte4 = karteIndex;
+                            //überprüfenSet;
+                            if (überprüfenSet(cards,karte1,karte2,karte3,karte4)){
+                                //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
+                                System.out.println("True");
+                                playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
+                                //Spieler score um 1 erhöhen, bei dem der SET gedrückt hat
+                                playerWindows[playerwhopressedSet].setPlayerScorePlus1();
+
+                                //Karten löschen mit dem größten index zu erst
+                                Integer[] karten = {karte1, karte2, karte3, karte4};
+                                Arrays.sort(karten, Collections.reverseOrder());
+                                System.out.println(cards.get(karte1).getName());
+                                cards.remove(karte1);
+                                System.out.println(cards.get(karte2).getName());
+                                cards.remove(karte2);
+                                System.out.println(cards.get(karte3).getName());
+                                cards.remove(karte3);
+                                System.out.println(cards.get(karte4).getName());
+                                cards.remove(karte4);
+
+
+                            } else {
+                                System.out.println("False");
+                                //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
+                                playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
+                                //Spieler score um 1 verringern, bei dem der SET gedrückt hat
+                                playerWindows[playerwhopressedSet].setPlayerScoreMinus1();
+                            }
+                            kartenAngeklickt = 0;
+                            setKlicked = false; // Makes every SET-Button pressable again
+                        }
+                        kartenAngeklickt++;
+                        System.out.println("Kartenindex: " + karteIndex); // Zur Überprüfung des Index
+                    }
+
+
+                });
+            }
+        }
+        if (gridUpdateCounter > 0){
+            VBox layout = new VBox(50);
+            layout.getChildren().addAll(grid,bottomButtons);
+            Scene scene = new Scene(layout,800,800);
+            return scene;
+
+        }else{
+            gridUpdateCounter++;
+            System.out.println(gridUpdateCounter);
+            return null;
+        }
+
+
     }
 
 }

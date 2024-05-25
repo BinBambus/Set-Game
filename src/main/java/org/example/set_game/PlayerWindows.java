@@ -54,6 +54,7 @@ public class PlayerWindows extends Application {
         playerSetButton.setOnAction(e -> {
             //Man darf nur SET drücken wenn man der erste ist
             if (SetGameWindow.setKlicked == false){
+                SetGameWindow.kartenAngeklickt = 0; //Neue eingabe von 4 Karten
                 SetGameWindow.setKlicked = true;
                 SetGameWindow.playerwhopressedSet = (player-1);//Minus 1 wichtig weil bei dem anlegen des fenster player+1 gerechnet wird
                 start1orEnd0_PlayerTimer(true, scoreLabel, timeLeftLabel);
@@ -101,6 +102,7 @@ public class PlayerWindows extends Application {
                     scoreLabel.setText("Score: " + playerScore);//Update Score if time runs out (Score -1)
                     timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
                     timeline.stop();
+                    SetGameWindow.setKlicked = false; // Makes every SET button pressable again after time runs out
                 }
             }));
             timeline.setCycleCount(Timeline.INDEFINITE); // Run indefinitely
