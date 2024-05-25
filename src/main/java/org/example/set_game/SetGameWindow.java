@@ -32,7 +32,6 @@ public class SetGameWindow extends Application {
     private int karte1;
     private int karte2;
     private int karte3;
-    private int karte4;
     public static boolean setKlicked = false;
     public static int playerwhopressedSet;
 
@@ -171,31 +170,27 @@ public class SetGameWindow extends Application {
         //Öffnen Spieler Fenster
         for (int i = 0; i < players; i++) {}
     }
-    public boolean überprüfenSet(ArrayList<Cards> cards, int karte1, int karte2, int karte3, int karte4){
+    public boolean überprüfenSet(ArrayList<Cards> cards, int karte1, int karte2, int karte3){
         boolean isSet;
-        if ((cards.get(karte1).getShape() == cards.get(karte2).getShape()) && (cards.get(karte2).getShape() == cards.get(karte3).getShape()) /**/ && (cards.get(karte3).getShape() == cards.get(karte4).getShape())) {
+        if ((cards.get(karte1).getShape() == cards.get(karte2).getShape()) && (cards.get(karte2).getShape() == cards.get(karte3).getShape())) {
             isSet = true;
-        } else if ((cards.get(karte1).getColour() == cards.get(karte2).getColour()) && (cards.get(karte2).getColour() == cards.get(karte3).getColour()) /**/ && (cards.get(karte3).getColour() == cards.get(karte4).getColour())){
+        } else if ((cards.get(karte1).getColour() == cards.get(karte2).getColour()) && (cards.get(karte2).getColour() == cards.get(karte3).getColour())){
             isSet = true;
-        } else if ((cards.get(karte1).getCount() == cards.get(karte2).getCount()) && (cards.get(karte2).getCount() == cards.get(karte3).getCount()) /**/ && (cards.get(karte3).getCount() == cards.get(karte4).getCount())){
+        } else if ((cards.get(karte1).getCount() == cards.get(karte2).getCount()) && (cards.get(karte2).getCount() == cards.get(karte3).getCount())){
             isSet = true;
-        } else if ((cards.get(karte1).getFilling() == cards.get(karte2).getFilling()) && (cards.get(karte2).getFilling() == cards.get(karte3).getFilling()) /**/ && (cards.get(karte3).getFilling() == cards.get(karte4).getFilling())){
+        } else if ((cards.get(karte1).getFilling() == cards.get(karte2).getFilling()) && (cards.get(karte2).getFilling() == cards.get(karte3).getFilling())){
             isSet = true;
-        } else if ((cards.get(karte1).getShape() != cards.get(karte2).getShape()) && (cards.get(karte1).getShape() != cards.get(karte3).getShape()) /**/ && (cards.get(karte1).getShape() == cards.get(karte4).getShape())
-                && (cards.get(karte2).getShape() != cards.get(karte3).getShape()) && (cards.get(karte2).getShape() != cards.get(karte4).getShape()) /**/
-                && (cards.get(karte3).getShape() != cards.get(karte4).getShape())) {
+        } else if ((cards.get(karte1).getShape() != cards.get(karte2).getShape()) && (cards.get(karte1).getShape() != cards.get(karte3).getShape())
+                && (cards.get(karte2).getShape() != cards.get(karte3).getShape())) {
             isSet = true;
-        } else if ((cards.get(karte1).getColour() != cards.get(karte2).getColour()) && (cards.get(karte1).getColour() != cards.get(karte3).getColour()) /**/ && (cards.get(karte1).getColour() == cards.get(karte4).getColour())
-                && (cards.get(karte2).getColour() != cards.get(karte3).getColour()) && (cards.get(karte2).getColour() != cards.get(karte4).getColour()) /**/
-                && (cards.get(karte3).getColour() != cards.get(karte4).getColour())) {
+        } else if ((cards.get(karte1).getColour() != cards.get(karte2).getColour()) && (cards.get(karte1).getColour() != cards.get(karte3).getColour())
+                && (cards.get(karte2).getColour() != cards.get(karte3).getColour())) {
             isSet = true;
-        } else if ((cards.get(karte1).getCount() != cards.get(karte2).getCount()) && (cards.get(karte1).getCount() != cards.get(karte3).getCount()) /**/ && (cards.get(karte1).getCount() == cards.get(karte4).getCount())
-                && (cards.get(karte2).getCount() != cards.get(karte3).getCount()) && (cards.get(karte2).getCount() != cards.get(karte4).getCount()) /**/
-                && (cards.get(karte3).getCount() != cards.get(karte4).getCount())) {
+        } else if ((cards.get(karte1).getCount() != cards.get(karte2).getCount()) && (cards.get(karte1).getCount() != cards.get(karte3).getCount()) /**/
+                && (cards.get(karte2).getCount() != cards.get(karte3).getCount())) {
             isSet = true;
-        } else if ((cards.get(karte1).getFilling() != cards.get(karte2).getFilling()) && (cards.get(karte1).getFilling() != cards.get(karte3).getFilling()) /**/ && (cards.get(karte1).getFilling() == cards.get(karte4).getFilling())
-                && (cards.get(karte2).getFilling() != cards.get(karte3).getFilling()) && (cards.get(karte2).getFilling() != cards.get(karte4).getFilling()) /**/
-                && (cards.get(karte3).getFilling() != cards.get(karte4).getFilling())) {
+        } else if ((cards.get(karte1).getFilling() != cards.get(karte2).getFilling()) && (cards.get(karte1).getFilling() != cards.get(karte3).getFilling())
+                && (cards.get(karte2).getFilling() != cards.get(karte3).getFilling())) {
             isSet = true;
         } else {
             isSet = false;
@@ -233,10 +228,9 @@ public class SetGameWindow extends Application {
                             karte2 = karteIndex;
                         }if (kartenAngeklickt == 2) {
                             karte3 = karteIndex;
-                        }if (kartenAngeklickt == 3) {
-                            karte4 = karteIndex;
+
                             //überprüfenSet;
-                            if (überprüfenSet(cards,karte1,karte2,karte3,karte4)){
+                            if (überprüfenSet(cards,karte1,karte2,karte3)){
                                 //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
                                 System.out.println("True");
                                 playerWindows[playerwhopressedSet].start1orEnd0_PlayerTimer(false,playerWindows[playerwhopressedSet].getScoreLabel(),playerWindows[playerwhopressedSet].getTimeLeftLabel());
@@ -244,7 +238,7 @@ public class SetGameWindow extends Application {
                                 playerWindows[playerwhopressedSet].setPlayerScorePlus1();
 
                                 //Karten löschen mit dem größten index zu erst
-                                Integer[] karten = {karte1, karte2, karte3, karte4};
+                                Integer[] karten = {karte1, karte2, karte3};
                                 Arrays.sort(karten, Collections.reverseOrder());
                                 System.out.println(cards.get(karte1).getName());
                                 cards.remove(karte1);
@@ -252,10 +246,6 @@ public class SetGameWindow extends Application {
                                 cards.remove(karte2);
                                 System.out.println(cards.get(karte3).getName());
                                 cards.remove(karte3);
-                                System.out.println(cards.get(karte4).getName());
-                                cards.remove(karte4);
-
-
                             } else {
                                 System.out.println("False");
                                 //Timer stoppen im Spieler Fenster, welches SET gedrückt hat
@@ -277,6 +267,7 @@ public class SetGameWindow extends Application {
         if (gridUpdateCounter > 0){
             VBox layout = new VBox(50);
             layout.getChildren().addAll(grid,bottomButtons);
+            layout.setPadding(new Insets(20,20,10,20));
             Scene scene = new Scene(layout,800,800);
             return scene;
 
