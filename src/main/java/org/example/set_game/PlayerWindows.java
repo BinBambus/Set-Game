@@ -102,7 +102,13 @@ public class PlayerWindows extends Application {
                     scoreLabel.setText("Score: " + playerScore);//Update Score if time runs out (Score -1)
                     timeLeftLabel.setText("Time Left: " + playerTimer);//Update Timer
                     timeline.stop();
-                    SetGameWindow.setKlicked = false; // Makes every SET button pressable again after time runs out
+                    SetGameWindow.setKlicked = false;// Makes every SET button pressable again after time runs out
+                    for (int i = 0; i < SetGameWindow.imageViews.size(); i++) {
+                        SetGameWindow.imageViews.get(i).setStyle("");
+                    }
+                    SetGameWindow.imageViews.clear();
+                    SetGameWindow.selectedCards.clear();
+                    SetGameWindow.activeCount = 0;
                 }
             }));
             timeline.setCycleCount(Timeline.INDEFINITE); // Run indefinitely
