@@ -22,6 +22,8 @@ public class PlayerWindows extends Application {
     Timeline timeline;
     private Label scoreLabel;
     private Label timeLeftLabel;
+    private Stage stage;
+
 
 
     public static void main(String[] args) {
@@ -30,6 +32,7 @@ public class PlayerWindows extends Application {
 
     @Override
     public void start(Stage playerStage) {
+        this.stage = playerStage;
         //Setting Root
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
@@ -125,4 +128,7 @@ public class PlayerWindows extends Application {
 
     }
 
+    public Stage getStage() {
+        return stage;
+    }
 }

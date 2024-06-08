@@ -31,10 +31,12 @@ public class SetGameWindow extends Application {
     GridPane grid;
     public static int kartenAngeklickt = 0;
     public static ArrayList<Cards> selectedCards = new ArrayList<>(3);
-    public static int activeCount;
+    public static int activeCount = 0;
     int MAX_ACTIVE = 3;
     public static boolean setKlicked = false;
     public static int playerwhopressedSet;
+    private Button endGame = new Button("End Game");
+
 
     public static void main(String[] args) {
         launch(args);
@@ -42,21 +44,8 @@ public class SetGameWindow extends Application {
 
     @Override
     public void start(Stage setGameStage){
-        //Karten Initzialisieren
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                for (int k = 0; k < 3; k++) {
-                    for (int l = 0; l < 3; l++) {
-                        cards.add(new Cards(i, j, k, l));
-                    }
-                }
-            }
-        }
-        //Karten mischen
-        Collections.shuffle(cards);
-
-
-
+        //Karten initialisieren
+        initializeCardsDeck();
         //Starting Screen
         //Setting Root pane
         VBox vbox = new VBox();
@@ -103,7 +92,12 @@ public class SetGameWindow extends Application {
             for (int i= 0; i < players; i++){
                 playerWindows[i] = new PlayerWindows();
                 playerWindows[i].setPlayer(i+1);
-                playerWindows[i].start(new Stage());
+                try {
+                    Stage playerStage = new Stage();
+                    playerWindows[i].start(playerStage);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -126,6 +120,24 @@ public class SetGameWindow extends Application {
 
         //GridPane
         buildGridPane(cards,4);
+
+        //Logic for endGame button
+        endGame.setOnAction(e ->{
+            setGameStage.setScene(scene1);
+            //Close Players
+            for (int i = 0; i < players; i++) {
+                try {
+                    Stage playerStage = playerWindows[i].getStage();
+                    if (playerStage != null) {
+                        playerWindows[i].getStage().close();
+                        setGameStage.close();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        });
 
         scene2 = new Scene(grid,800,800);
 
@@ -339,7 +351,7 @@ public class SetGameWindow extends Application {
 
             }
         }
-        Button endGame = new Button("End Game");
+
         Button noSet = new Button("No Set");
         noSet.setOnAction(e ->{
             buildGridPanePlus3(cards);
@@ -351,8 +363,20 @@ public class SetGameWindow extends Application {
 
         }else{
             gridUpdateCounter++;
-            System.out.println(gridUpdateCounter);
-
         }
+    }
+    public void initializeCardsDeck(){
+        //Karten Initzialisieren
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        cards.add(new Cards(i, j, k, l));
+                    }
+                }
+            }
+        }
+        //Karten mischen
+        Collections.shuffle(cards);
     }
 }
